@@ -1,0 +1,39 @@
+# create directory for store certificate file and any requirements
+[-] mkdir -p cert/demoCA/newcerts
+[-] touch cert/demoCA/index.txt
+[-] echo 1000 > cert/demoCA/serial
+[-] cd cert
+
+# create key for root, intermediate and certificate
+[-] openssl genrsa -out ca.root.key
+[-] openssl genrsa -out ca.intermediate.key
+[-] openssl genrsa -out certificate.key
+
+# create root ca
+[-] openssl req -x509 -new -nodes -key ca.root.key -out ca.root.pem
+
+# create intermediate ca request (csr)
+[-] openssl req -new -nodes -key ca.intermediate.key -out ca.intermediate.csr
+
+# signing intermediate request with ca root
+[-] openssl ca -keyfile ca.root.key -cert ca.root.pem -extension v3_ca -in ca.intermediate.csr -out ca.intermediate.pem
+
+# create subject alt name file like this
+---
+subjectAltName = @alt
+[alt]
+DNS.1 = domain.id
+DNS.2 = *.domain.id
+---
+
+# create certificate request
+[-] openssl req -new -nodes -key certificate.key -out certificate.csr
+
+# signing certificate request with intermediate ca for installing in web server like apache and nginx
+[-] openssl x509 -req -in certificate.csr -out certificate.crt -CA ca.intermediate.pem -CAkey ca.intermediate.key -CAcreateserial -extfile san.conf
+
+# bundle intermediate certificates and server certificates to correctly perform TLS handshake
+[-] cat ca.intermediate.pem certificate.crt > bundle.crt
+
+# last step you can distribute root ca to client
+# and you can install bundle.crt and certificate key to server
