@@ -36,4 +36,4 @@ DNS.2 = *.domain.id
 [-] cat ca.intermediate.pem certificate.crt > bundle.crt
 
 # last step you can distribute root ca to client
-# and you can install bundle.crt and certificate key to server
+# and you can install bundle.crt and certificate.key to server
