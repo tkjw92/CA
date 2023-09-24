@@ -33,7 +33,7 @@ DNS.2 = *.domain.id
 [-] openssl x509 -req -in certificate.csr -out certificate.crt -CA ca.intermediate.pem -CAkey ca.intermediate.key -CAcreateserial -extfile san.conf
 
 # bundle intermediate certificates and server certificates to correctly perform TLS handshake
-[-] cat ca.intermediate.pem certificate.crt > bundle.crt
+[-] cat certificate.crt ca.intermediate.pem > bundle.crt
 
 # last step you can distribute root ca to client
 # and you can install bundle.crt and certificate.key to server
